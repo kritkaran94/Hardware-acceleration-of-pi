@@ -1,0 +1,75 @@
+from __future__ import absolute_import, division, print_function, unicode_literals
+
+
+VERSION = '1.13'
+
+VERBOSE = False
+KIVYDEBUG = False
+
+from sample import constants
+
+EGL_DEFAULT_DISPLAY = 0
+EGL_NO_CONTEXT = 0
+EGL_NO_DISPLAY = 0
+EGL_NO_SURFACE = 0
+EGL_FALSE = 0
+DISPMANX_PROTECTION_NONE = 0
+
+# Is this running on a raspberry pi?
+PLATFORM_PI = 0
+PLATFORM_OSX = 1
+PLATFORM_WINDOWS = 2
+PLATFORM_LINUX = 3
+PLATFORM_ANDROID = 4
+
+def _load_library(name):
+  if name:
+    try:
+      import ctypes
+      return ctypes.CDLL(name)
+    except:
+      from sample.util import Log
+      Log.logger(__name__).error("Couldn't load library %s", name)
+
+def _linux():
+  platform = PLATFORM_LINUX
+  
+  from ctypes.util import find_library
+  from os import environ
+  
+  bcm_name = find_library('bcm_host')
+  if bcm_name:
+    platform = PLATFORM_PI
+    bcm = _load_library(bcm_name)
+  else:
+    bcm = None
+
+  if environ.get('ANDROID_APP_PATH'):
+    platform = PLATFORM_ANDROID
+    opengles = _load_library('/system/lib/libGLESv2.so')
+    openegl = _load_library('/system/lib/libEGL.so')
+  else:
+    opengles = _load_library(find_library('GLESv2'))
+    openegl = _load_library(find_library('EGL')) 
+  
+  return platform, bcm, openegl, opengles 
+
+def _darwin():
+  pass
+
+_PLATFORMS = {
+  'linux': _linux,
+  'darwin': _darwin
+  }
+
+def _detect_platform_and_load_libraries():
+  import platform
+
+  platform_name = platform.system().lower()
+  loader = _PLATFORMS.get(platform_name, None)
+  if not loader:
+    raise Exception("Couldn't understand platform %s" % platform_name)
+
+  return loader()
+
+PLATFORM, bcm, openegl, opengles = _detect_platform_and_load_libraries()
