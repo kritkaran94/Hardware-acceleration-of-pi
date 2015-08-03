@@ -1,4 +1,4 @@
-# Hw_acc_Pi-
+# Hardware-acceleration-of-pi
 
 
 <b>Hardware acceleration through OpenGL ES 2.0 </b>
