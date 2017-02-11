@@ -12,14 +12,11 @@ Make VisPy work on the Raspberry Pi:
  
 -----------------------------
 
-Project Status :  Completion Level 80%
+Project Status :  Complete
 
 -----------------------------
 
-Left In between due to Summer Internship at CBIX India 2015 and due to an unsuccessful application for VisPy during GSOC 2015. 
-
-
-Though, the effort was appreciated by mentors Cyrille Rossant and Almer Klien.
+The effort was appreciated by mentors Cyrille Rossant and Almer Klien.
 
 ----------------------------
 
